@@ -10,6 +10,7 @@
 #include "src_adc.h"
 #include "src_sw.h"
 #include "src_ds.h"
+#include "psx.h"
 #include "datenschlag.h"
 #include "datenschlag_structs.h"
 
@@ -35,6 +36,7 @@
 #define SRC_ADC 1
 #define SRC_SW  2
 #define SRC_DS  3
+#define SRC_PS2PAD	4
 #define SRC_ID(s,n) ( (((s)&0x0F)<<4) | ((n)&0x0F) )
 
 #define SRC_SYS(n)  ((n)>>4)
@@ -47,6 +49,10 @@ static uint8_t channel_source[] = {
 	SRC_ID(SRC_ADC, 3),
 	SRC_ID(SRC_SW,  0),
 	SRC_ID(SRC_DS,  0),
+	SRC_ID(SRC_PS2PAD, 5),
+	SRC_ID(SRC_PS2PAD, 6),	
+	SRC_ID(SRC_PS2PAD, 7),
+	SRC_ID(SRC_PS2PAD, 8)
 };
 
 #define N_CHANNELS (sizeof(channel_source)/sizeof(*channel_source))
@@ -78,6 +84,9 @@ static int16_t get_channel(uint8_t i) {
 			break;
 		case SRC_DS:
 			val = ds_get_next_pulse();
+			break;
+		case SRC_PS2PAD:
+			val = ps2_get(SRC_NUM(src));
 			break;
 		default: /* unknown source */
 			break;
@@ -124,6 +133,9 @@ int main(void) {
 	/* configure switches */
 	sw_init();
 
+	/* configure PS2 pad */
+	psx_init(PSX_SPI,PSX_DAT,PSX_SPI,PSX_CLK,PSX_SPI,PSX_COM,PSX_ATT,PSX_ATN);
+	
 	/* configure ADC */
 	adc_init();
 
@@ -179,6 +191,9 @@ int main(void) {
 		/* query switches */
 		sw_query();
 
+		/* query PS2 Pad */
+		ps2_query();
+		
 		/* prepare Datenschlag data frames */
 		ds_prepare();
 
