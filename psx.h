@@ -6,11 +6,11 @@
 #include <util/delay.h>
 
 #define PSX_SPI	PORTB
-#define PSX_DAT PB5
-#define PSX_CLK PB4
-#define PSX_COM PB3
+#define PSX_DAT PB2 // brown wire from pad to avr
+#define PSX_CLK PB3 // blue wire from avr to pad
+#define PSX_COM PB4 // orange wire from avr to pad
 #define PSX_ATT PORTD
-#define PSX_ATN PD7
+#define PSX_ATN PD7 // yellow wire from avr to pad
 
 
 
