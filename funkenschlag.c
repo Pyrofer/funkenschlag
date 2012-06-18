@@ -52,7 +52,7 @@ static uint8_t channel_source[] = {
 	SRC_ID(SRC_PS2PAD, 5),
 	SRC_ID(SRC_PS2PAD, 6),	
 	SRC_ID(SRC_PS2PAD, 7),
-	SRC_ID(SRC_PS2PAD, 8)
+	SRC_ID(SRC_PS2PAD, 8),
 };
 
 #define N_CHANNELS (sizeof(channel_source)/sizeof(*channel_source))
@@ -129,13 +129,14 @@ int main(void) {
 	VOL_PORT |= (1<<VOL_BIT); // enable pullup
 
 	serial_init();
-
+	serial_write_str("Serial Active\n\r");
 	/* configure switches */
 	sw_init();
-
+	serial_write_str("Switches Inited\n\r");
 	/* configure PS2 pad */
+	serial_write_str("Activating PS2 Pad...");
 	psx_init(PSX_SPI,PSX_DAT,PSX_SPI,PSX_CLK,PSX_SPI,PSX_COM,PSX_ATT,PSX_ATN);
-	
+	serial_write_str("Done\n\r");
 	/* configure ADC */
 	adc_init();
 

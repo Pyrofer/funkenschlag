@@ -1,4 +1,4 @@
-MCU = atmega8
+MCU = atmega328p
 F_CPU = 8000000
 TARGET = funkenschlag
 SRC = funkenschlag.c serial.c src_adc.c src_sw.c src_ds.c psx.c datenschlag.c
