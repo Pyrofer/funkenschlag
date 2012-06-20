@@ -139,69 +139,89 @@ int main(void) {
 	serial_write_str("Done\n\r");
 	/* configure ADC */
 	adc_init();
-
-	/* configure watchfog timer to reset after 60ms */
+/*
+	// configure watchfog timer to reset after 60ms 
 	wdt_enable(WDTO_60MS);
 
-	/* configure timer */
+	// configure timer 
 
-	/* enable CTC waveform generation (TOP == OCR1A) */
+	// enable CTC waveform generation (TOP == OCR1A) 
 	TCCR1B |= (1<<WGM12);
-	/* set compare value for the stop pulse to 300µs */
+	// set compare value for the stop pulse to 300µs 
 	OCR1B = STOP_US;
-	/* set pulse width to max for now */
+	// set pulse width to max for now 
 	OCR1A = ~0;
-	/* set Timer 1 to clk/8, giving us ticks of 1 µs */
+	// set Timer 1 to clk/8, giving us ticks of 1 µs 
 	TCCR1B |= (1<<CS11);
 
-	/* Timer 2 generates overflows at 1kHz */
-#if defined(TCCR2) /* e.g. ATMega8 */
+	// Timer 2 generates overflows at 1kHz 
+#if defined(TCCR2) // e.g. ATMega8 
 #define TIMER2_COMP_IRQ TIMER2_COMP_vect
 	TCCR2 = (1<<WGM21 | 1<<CS22);
 	OCR2 = 0x7D;
-	/* enable compare and overflow interrupts */
+	// enable compare and overflow interrupts 
 	TIMSK = (1<<OCIE2 | 1<<OCIE1B | 1<<OCIE1A);
-#elif defined(TCCR2A) /* e.g. ATMega{8,16,32}8 */
+#elif defined(TCCR2A) // e.g. ATMega{8,16,32}8 
 #define TIMER2_COMP_IRQ TIMER2_COMPA_vect
 	TCCR2A = (1<<WGM21);
 	TCCR2B = (1<<CS22);
 	OCR2A = 0x7D;
-	/* enable compare and overflow interrupts */
+	// enable compare and overflow interrupts 
 	TIMSK1 = (1<<OCIE1B | 1<<OCIE1A);
 	TIMSK2 = (1<<OCIE2A);
 #else
 #error "Unable to determine timer 2 configuration registers"
 #endif
 
-	/* initialize channel data */
+	// initialize channel data 
 	start_ppm_frame();
 	set_ppm(1);
 	start_ppm_pulse();
 
-	/* enable interrupts */
+	// enable interrupts 
 	sei();
-
+*/
 	serial_write_str("Welcome!\n");
 	while (1) {
 		/* reset watchdog */
-		wdt_reset();
+//		wdt_reset();
 
 		/* keep sampling adc data */
-		adc_query();
+//		adc_query();
 
 		/* query switches */
-		sw_query();
+//		sw_query();
 
 		/* query PS2 Pad */
 		ps2_query();
-		
-		/* prepare Datenschlag data frames */
-		ds_prepare();
 
+		/* prepare Datenschlag data frames */
+//		ds_prepare();
+
+		//if (psx_stick(5)>=140) serial_write_str("Over  140\r");
+		//if (psx_stick(5)<=100) serial_write_str("Under 100\r");
+		serial_write_str("Triangle=");
+		if (psx_button(PSB_TRIANGLE)) serial_write_str("1");
+		else serial_write_str("0");
+		
+		serial_write_str(" Square=");
+		if (psx_button(PSB_SQUARE)) serial_write_str("1");
+		else serial_write_str("0");
+		
+		serial_write_str(" Cross=");
+		if (psx_button(PSB_CROSS)) serial_write_str("1");
+		else serial_write_str("0");
+
+		serial_write_str(" Circle=");
+		if (psx_button(PSB_CIRCLE)) serial_write_str("1");
+		else serial_write_str("0");
+		serial_write_str("\r");
 		/* check voltage */
-		if ((~VOL_PIN) & 1<<VOL_BIT) {
+		//if ((~VOL_PIN) & 1<<VOL_BIT) {
+		if ((VOL_PIN) & 1<<VOL_BIT) {
 			// everything OK
-			LED_PORT |= (1<<LED_BIT);
+			//LED_PORT |= (1<<LED_BIT);
+			LED_PORT &= ~(1<<LED_BIT);
 		} else {
 			// voltage dropped, alert the user!
 			if (millis/250 % 2) {
